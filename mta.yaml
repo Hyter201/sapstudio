@@ -1,3 +1,57 @@
 _schema-version: "3.2"
 ID: prj2
 version: 0.0.1
+modules:
+- name: prj2-destination-content
+  type: com.sap.application.content
+  requires:
+  - name: prj2-destination-service
+    parameters:
+      content-target: true
+  - name: prj2_html_repo_host
+    parameters:
+      service-key:
+        name: prj2_html_repo_host-key
+  - name: uaa_prj2
+    parameters:
+      service-key:
+        name: uaa_prj2-key
+  parameters:
+    content:
+      instance:
+        destinations:
+        - Name: zprova_prj2_html_repo_host
+          ServiceInstanceName: prj2-html5-app-host-service
+          ServiceKeyName: prj2_html_repo_host-key
+          sap.cloud.service: zprova
+        - Authentication: OAuth2UserTokenExchange
+          Name: zprova_uaa_prj2
+          ServiceInstanceName: prj2-xsuaa-service
+          ServiceKeyName: uaa_prj2-key
+          sap.cloud.service: zprova
+        existing_destinations_policy: ignore
+  build-parameters:
+    no-source: true
+resources:
+- name: prj2-destination-service
+  type: org.cloudfoundry.managed-service
+  parameters:
+    config:
+      HTML5Runtime_enabled: true
+      version: 1.0.0
+    service: destination
+    service-name: prj2-destination-service
+    service-plan: lite
+- name: prj2_html_repo_host
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: html5-apps-repo
+    service-name: prj2-html5-app-host-service
+    service-plan: app-host
+- name: uaa_prj2
+  type: org.cloudfoundry.managed-service
+  parameters:
+    path: ./xs-security.json
+    service: xsuaa
+    service-name: prj2-xsuaa-service
+    service-plan: application
